@@ -15,7 +15,7 @@ namespace WeatherApp
         {
             Database.SetInitializer(new WeatherDbInitializer());
         }
-
+        
         public DbSet<Forecast> Forecasts { get; set; }
         public DbSet<Temperature> Temperatures { get; set; }
         public DbSet<Weather> Weather { get; set; }
@@ -27,11 +27,11 @@ namespace WeatherApp
     {
         protected override void Seed(WeatherContext context)
         {
-            FileInfo info = new FileInfo("city.list.json");
-            var data = info.OpenText().ReadToEnd();
+            //FileInfo info = new FileInfo("city.list.json");
+            //var data = info.OpenText().ReadToEnd();
 
-            List<City> cities = JsonConvert.DeserializeObject<List<City>>(data);
-            context.Cities.AddRange(cities.Take(1000));
+            //List<City> cities = JsonConvert.DeserializeObject<List<City>>(data);
+            //context.Cities.AddRange(cities.Take(50000));
 
             base.Seed(context);
         }
