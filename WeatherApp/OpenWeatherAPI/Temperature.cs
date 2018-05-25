@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace WeatherApp
+namespace WeatherApp.OpenWeatherAPI
 {
     public class Temperature
     {

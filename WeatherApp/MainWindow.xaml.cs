@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -15,30 +16,35 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WeatherApp.OpenWeatherAPI;
+using WeatherApp.YahooAPI;
 
 namespace WeatherApp
 {
     public partial class MainWindow : Window
     {
-        public string weatherApi;
+        public ObservableCollection<ForecastView> forecastItems;
 
         public MainWindow()
         {
-            weatherApi = "07f873a032cff98db6a2498110f9a6a8";
+            InitializeComponent();
 
-            //InitializeComponent();
-
-            //WebClient client = new WebClient();
-            //var data = client.DownloadString(new Uri("https://api.openweathermap.org/data/2.5/forecast?q=Astana,kz&mode=json&APIID=" + weatherApi));
-
-            Task.Run(() => InitializeDatabase());
+            forecastItems = new ObservableCollection<ForecastView>();
+            weatherList.ItemsSource = forecastItems;
         }
 
-        private void LoadBtnClick(object sender, RoutedEventArgs e)
+        private async void LoadBtnClick(object sender, RoutedEventArgs e)
         {
-            WebClient client = new WebClient();
+            if (String.IsNullOrWhiteSpace(TextBox.Text))
+            {
+                MessageBox.Show("Введите название города!");
+                return;
+            }
 
-            client.DownloadStringAsync(new Uri("https://mail.ru"));
+            Example forecasts = await WeatherData.GetForecastData(TextBox.Text);
+
+            if (forecasts.Query.Results != null)
+                weatherList.ItemsSource = WeatherData.GetForecastList(forecasts);
         }
 
         private void InitializeDatabase()

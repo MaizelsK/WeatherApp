@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         xmlns:local="clr-namespace:WeatherApp"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="750" ResizeMode="NoResize">
@@ -21,24 +22,28 @@
             <Setter Property="Height" Value="100"/>
             <Setter Property="Width" Value="100"/>
         </Style>
+
+        <DataTemplate x:Key="listTemplate">
+            <Border BorderBrush="#FF84A0FF" BorderThickness="3">
+                <StackPanel Margin="5">
+                    <Label Content="{Binding Path=Date, IsAsync=True}"/>
+                    <Image Width="100" Height="100" Source="{Binding Path=Image, IsAsync=True}" />
+                    <Label FontSize="16" Content="{Binding Path=Temperature, IsAsync=True}" HorizontalAlignment="Center" />
+                    <Label FontSize="16" Content="{Binding Path=WindSpeed, IsAsync=True}" HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
     </Window.Resources>
     <!-- Конец стилей -->
 
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="25*"/>
-            <ColumnDefinition Width="25*"/>
-            <ColumnDefinition Width="25*"/>
-            <ColumnDefinition Width="25*"/>
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="15*"/>
-            <RowDefinition Height="40*"/>
-            <RowDefinition Height="40*"/>
+            <RowDefinition Height="92*"/>
+            <RowDefinition Height="379*"/>
         </Grid.RowDefinitions>
 
         <!-- Шапка -->
-        <DockPanel Grid.Row="0" Grid.ColumnSpan="4">
+        <DockPanel Grid.Row="0">
             <Label DockPanel.Dock="Left" Content="Прогноз погоды" FontSize="28"
                    VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,20,0"
                    Style="{x:Null}" FontFamily="Century Gothic"/>
@@ -46,81 +51,50 @@
             <DockPanel DockPanel.Dock="Right">
 
                 <Rectangle  Width="4" Fill="#FF84A0FF"/>
-                <StackPanel Orientation="Vertical" Margin="10,0">
-                    <Label  Content="Введите название города" Margin="0,2,0,0"/>
+                <StackPanel Orientation="Vertical" Margin="10,0" Width="283">
+                    <Label  Content="Введите название города" Margin="0,2,0,0"
+                            FontSize="20"/>
 
-                    <TextBox Name="TextBox" DockPanel.Dock="Right" FontSize="24" Margin="0,0,0,0"
+                    <TextBox Name="TextBox" DockPanel.Dock="Right" FontSize="24" Margin="0,10,0,0"
                       VerticalAlignment="Center" HorizontalAlignment="Center" Width="200" BorderBrush="#FF84A0FF" BorderThickness="2"/>
                 </StackPanel>
 
                 <Button Name="LoadBtn" DockPanel.Dock="Right" HorizontalAlignment="Center" VerticalAlignment="Center"
                         Content="Прогноз" FontSize="24" FontFamily="Century Gothic" Padding="10,5,10,5"
-                        BorderBrush="#FF84A0FF" Background="White" BorderThickness="3"/>
+                        BorderBrush="#FF84A0FF" Background="White" BorderThickness="3" Click="LoadBtnClick"/>
 
             </DockPanel>
         </DockPanel>
         <!-- Конец шапки -->
 
         <Rectangle Grid.Row="1" HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                   Height="4" Fill="#FF84A0FF" Grid.ColumnSpan="4"/>
+                   Height="4" Fill="#FF84A0FF"/>
 
         <!-- Элементы прогноза -->
 
-        <!-- Day 1-->
-        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="0">
-            <Label Content="Day 1"/>
-            <Image Name="Day1Image"/>
-        </StackPanel>
-
-        <!-- Day 2-->
-        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="1">
-            <Label Content="Day 2"/>
-            <Image Name="Day2Image"/>
-        </StackPanel>
-
-        <!-- Day 3-->
-        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="2">
-            <Label Content="Day 3"/>
-            <Image Name="Day3Image"/>
-        </StackPanel>
-
-        <!-- Day 4-->
-        <StackPanel Orientation="Vertical" Grid.Row="1" Grid.Column="3">
-            <Label Content="Day 4"/>
-            <Image Name="Day4Image"/>
-        </StackPanel>
-
-        <!-- Day 5-->
-        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="0">
-            <Label Content="Day 5"/>
-            <Image Name="Day5Image"/>
-        </StackPanel>
-
-        <!-- Day 6-->
-        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="1">
-            <Label Content="Day 6"/>
-            <Image Name="Day6Image"/>
-        </StackPanel>
-
-        <!-- Day 7-->
-        <StackPanel Orientation="Vertical" Grid.Row="2" Grid.Column="2">
-            <Label Content="Day 7"/>
-            <Image Name="Day7Image"/>
-        </StackPanel>
+        <ListBox Grid.Row="1" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+            x:Name="weatherList" ItemTemplate="{StaticResource listTemplate}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+        </ListBox>
 
         <!-- Конец элементов прогноза -->
 
         <!-- Загрузка... -->
 
-        <StackPanel Grid.Column="3" Grid.Row="3" >
+        <!--<StackPanel Name="LoadingStack" Grid.Column="3" Grid.Row="3" >
 
-            <MediaElement Name="DownloadIcon" Source="loading.gif" Height="140" Width="140"
+            <Image  Name="DownloadIcon" Height="140" Width="140" gif:ImageBehavior.AnimatedSource="loading.gif"
                       Visibility="Visible" VerticalAlignment="Top" Margin="0,10,0,0"/>
 
-            <ProgressBar Name="ProgressBar" Margin="20,10,20,0" Height="20"/>
+            <ProgressBar Name="ProgressBar" Margin="20,10,20,0" Height="20" IsIndeterminate="True"
+                         Foreground="#FFFF7C81"/>
             
-        </StackPanel>
-        
+        </StackPanel>-->
+
         <!-- Конец загрузки -->
     </Grid>
 </Window>
