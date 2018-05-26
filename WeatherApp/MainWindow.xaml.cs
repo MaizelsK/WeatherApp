@@ -16,59 +16,58 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WeatherApp.OpenWeatherAPI;
 using WeatherApp.YahooAPI;
 
 namespace WeatherApp
 {
     public partial class MainWindow : Window
     {
-        public ObservableCollection<ForecastView> forecastItems;
+        private bool isLoading;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            forecastItems = new ObservableCollection<ForecastView>();
-            weatherList.ItemsSource = forecastItems;
+            isLoading = false;
         }
 
+        // Загрузка прогноза
         private async void LoadBtnClick(object sender, RoutedEventArgs e)
         {
             if (String.IsNullOrWhiteSpace(TextBox.Text))
             {
-                MessageBox.Show("Введите название города!");
+                MessageBox.Show("Enter the city name");
                 return;
             }
+
+            ChangeLoadingVisibility();
 
             Example forecasts = await WeatherData.GetForecastData(TextBox.Text);
 
             if (forecasts.Query.Results != null)
                 weatherList.ItemsSource = WeatherData.GetForecastList(forecasts);
+            else
+                MessageBox.Show("No data for entered city...");
+
+            ChangeLoadingVisibility();
         }
 
-        private void InitializeDatabase()
+        // Смена видимости загрузки
+        private void ChangeLoadingVisibility()
         {
-            FileInfo info = new FileInfo("city.list.json");
-            var data = info.OpenText().ReadToEnd();
-
-            List<City> cities = JsonConvert.DeserializeObject<List<City>>(data);
-
-            using (var context = new WeatherContext())
+            if (isLoading)
             {
-                int border = 0;
+                isLoading = false;
 
-                for (int i = 0; i < cities.Count; i++)
-                {
-                    context.Cities.Add(cities[i]);
-                    border++;
+                LoadingGif.Visibility = Visibility.Hidden;
+                LoadingRect.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                isLoading = true;
 
-                    if (border == 1000)
-                    {
-                        border = 0;
-                        context.SaveChanges();
-                    }
-                }
+                LoadingGif.Visibility = Visibility.Visible;
+                LoadingRect.Visibility = Visibility.Visible;
             }
         }
     }

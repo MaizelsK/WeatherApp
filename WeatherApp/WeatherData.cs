@@ -38,28 +38,37 @@ namespace WeatherApp
 
         public static List<ForecastView> GetForecastList(Example forecasts)
         {
-                List<ForecastView> newForecastViews = new List<ForecastView>();
+            List<ForecastView> newForecastViews = new List<ForecastView>();
 
-                for (int i = 0; i < 7; i++)
+            for (int i = 0; i < 7; i++)
+            {
+                Forecast forecast = forecasts.Query.Results.Channel[i].Item.Forecast;
+                Wind wind = forecasts.Query.Results.Channel[i].Wind;
+
+                newForecastViews.Add(new ForecastView
                 {
-                    Forecast forecast = forecasts.Query.Results.Channel[i].Item.Forecast;
-                    Wind wind = forecasts.Query.Results.Channel[i].Wind;
+                    Date = forecast.Date,
+                    Temperature = forecast.High + " °C",
+                    WindSpeed = GetFormatedWindSpeed(wind.Speed),
+                    WeatherImage = GetImage(forecast.Text),
+                });
+            }
 
-                    newForecastViews.Add(new ForecastView
-                    {
-                        Date = forecast.Date,
-                        Temperature = forecast.High + " °C",
-                        WindSpeed = wind.Speed + " км/ч",
-                        Image = GetImage(forecast.Text),
-                    });
-                }
+            return newForecastViews;
+        }
+        
+        private static string GetFormatedWindSpeed(string wind)
+        {
+            float metersPerSecond = 0.27f;
 
-                return newForecastViews;
+            float speed = float.Parse(wind.Replace('.', ',')) * metersPerSecond;
+
+            return String.Format("{0:0.00} m/s", speed);
         }
 
         private static BitmapImage GetImage(string imageName)
         {
-            return new BitmapImage(new Uri("icons/" + imageName.ToLower() + ".png", UriKind.RelativeOrAbsolute));
+            return new BitmapImage(new Uri("icons\\" + imageName.ToLower() + ".png", UriKind.RelativeOrAbsolute));
         }
     }
 }

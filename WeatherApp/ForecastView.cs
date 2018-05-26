@@ -10,8 +10,17 @@ namespace WeatherApp
     public class ForecastView
     {
         public string Date { get; set; }
-        public BitmapImage Image { get; set; } 
         public string Temperature { get; set; }
         public string WindSpeed { get; set; }
+
+        public BitmapImage WeatherImage { get; set; }
+        public BitmapImage TempImage { get; set; }
+        public BitmapImage WindImage { get; set; }
+
+        public ForecastView()
+        {
+            TempImage = new BitmapImage(new Uri("icons\\termometr.png", UriKind.RelativeOrAbsolute));
+            WindImage = new BitmapImage(new Uri("icons\\wind speed.png", UriKind.RelativeOrAbsolute));
+        }
     }
 }
